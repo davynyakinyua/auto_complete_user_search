@@ -21,12 +21,13 @@ import './App.css'
         AbortController
         Debounce function
           API call
+          try catch error handling
      
     Control flow
+      search bar
       if loading show
       if error show
       if !loading && !error show
-        search bar
         list of users
 
 */
@@ -35,9 +36,49 @@ import './App.css'
 
 function App() {
 const [users, setUsers] = useState([]);
+const [filteredUsers, setFilteredUsers] = useState([]);
 const [loading, setLoading] = useState(true);
 const [error, setError] = useState(null);
 const [userInput, setUserInput] = useState('');
+
+// fetch all users once on mount
+useEffect(() => {
+  const controller = new AbortController();
+  
+  async function fetchUsers () {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch('https://jsonplaceholder.typicode.com/users', {signal:controller.signal});
+
+      if(!response.ok){
+        throw new Error('Failed to fetch users from server');
+      }
+
+      const data = await response.json();
+
+      setUsers(data);
+
+      setFilteredUsers(data);
+
+    } catch(error) {
+      if(error.name !== 'AbortError'){
+        setError(error.message);
+      }
+    } finally {
+      if(!controller.signal.aborted){
+        setLoading(false);
+      }
+    }
+
+  }
+
+  fetchUsers();
+  
+  return () => controller.abort();
+
+}, []);
 
   return (
     <>
