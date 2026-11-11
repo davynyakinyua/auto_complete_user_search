@@ -1,6 +1,8 @@
 Markdown
 # Real-Time User Search Application
 
+[✨ **View Live Demo**](https://autocomleteusersearch.netlify.app/)
+
 A clean, production-ready React application that fetches user data from an API, manages asynchronous loading and error states with a retry mechanism, and provides lightning-fast real-time filtering with edge-case handling.
 
 Built as part of a technical evaluation to showcase React fundamentals, side-effect management, and robust UI state flow.
