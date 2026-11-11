@@ -1,16 +1,73 @@
-# React + Vite
+Markdown
+# Real-Time User Search Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A clean, production-ready React application that fetches user data from an API, manages asynchronous loading and error states with a retry mechanism, and provides lightning-fast real-time filtering with edge-case handling.
 
-Currently, two official plugins are available:
+Built as part of a technical evaluation to showcase React fundamentals, side-effect management, and robust UI state flow.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 🚀 Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Real-Time Search Filtering:** Instantly filters through user names and emails as you type.
+- **Robust Edge-Case Handling:** 
+  - Case-insensitive matching (`"JOHN"`, `"John"`, and `"john"` all match).
+  - Whitespace trimming (prevents false empty states from accidental trailing or leading spaces).
+  - Graceful "No user found" feedback when search results are empty.
+- **Asynchronous Lifecycle & Cleanup:** 
+  - Uses `AbortController` to cleanly cancel pending fetch requests and prevent memory leaks or state updates on unmounted components.
+- **Error Handling & Retry Flow:** 
+  - Catches network failures cleanly and presents a user-friendly error state with an interactive **Try again** button.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🛠️ Technical Implementation Highlights
+
+- **Derived State:** Filters the user list directly during the render cycle rather than keeping redundant synchronization states, keeping the code DRY and eliminating synchronization bugs.
+- **Modern React Hooks:** Leverages `useState` for state management and `useEffect` for handling side effects and cleanup workflows.
+
+---
+
+## 📋 Component Architecture & Control Flow
+
+[ App Component Mounts ]
+│
+├──> Fetch Users API Call (with AbortController)
+│         ├──> Success ──> Set Users State ──> Display User List
+│         └──> Failure ──> Catch Error ──────> Display Error & Retry Button
+│
+└──> User Typing (onChange)
+└──> Compute Derived filteredUsers (case-insensitive & trimmed)
+├──> If match found ──> Render list items
+└──> If 0 results ───> Render "No user found" message
+
+
+---
+
+## ⚙️ Getting Started & Local Installation
+
+### Prerequisites
+Make sure you have [Node.js](https://nodejs.org/) installed on your machine.
+
+### Installation Steps
+
+1. Clone the repository:
+   ```bash
+   git clone git@github.com:davynyakinyua/auto_complete_user_search.git
+   cd auto_complete_user_search.git
+Install dependencies:
+
+Bash
+npm install
+Run the development server:
+
+Bash
+npm run dev
+Open your browser and navigate to the local URL provided by Vite (usually http://localhost:5173).
+
+🌐 API Reference
+This app fetches mock user data from JSONPlaceholder:
+
+Endpoint: https://jsonplaceholder.typicode.com/users
+
+Data Extracted: User id, name, and email.
