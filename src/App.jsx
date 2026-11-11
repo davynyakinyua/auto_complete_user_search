@@ -19,7 +19,6 @@ import './App.css'
     Event/triggers
       useEffect
         AbortController
-        Debounce function
           API call
           try catch error handling
      
@@ -36,10 +35,10 @@ import './App.css'
 
 function App() {
 const [users, setUsers] = useState([]);
-const [filteredUsers, setFilteredUsers] = useState([]);
 const [loading, setLoading] = useState(true);
 const [error, setError] = useState(null);
 const [userInput, setUserInput] = useState('');
+const [retryCount, setRetryCount] = useState(0);
 
 // fetch all users once on mount
 useEffect(() => {
@@ -60,8 +59,6 @@ useEffect(() => {
 
       setUsers(data);
 
-      setFilteredUsers(data);
-
     } catch(error) {
       if(error.name !== 'AbortError'){
         setError(error.message);
@@ -78,29 +75,19 @@ useEffect(() => {
   
   return () => controller.abort();
 
-}, []);
+}, [retryCount]);
 
 // Handle real-time filtering with case-insensitivity and whitespace trimming
-useEffect(() => {
-  const trimmedInput = userInput.trim().toLowerCase();
+ const trimmedInput = userInput.trim().toLowerCase();
 
-  if(!trimmedInput){
-    setFilteredUsers(users);
-  } else {
-    const results = users.filter((user) => {
+ const filteredUsers = users.filter((user) => {
       if(!trimmedInput) return true;
       
       return (
         user.name.toLowerCase().includes(trimmedInput) || 
         user.email.toLowerCase().includes(trimmedInput)
-      );
-    });
-
-    return setFilteredUsers(results);
-  }
-
-
-}, [userInput, users]);
+      )}
+    );
 
   return (
     <>
@@ -123,7 +110,7 @@ useEffect(() => {
       {error && (
         <div>
           <p>{error}</p>
-          <button>Try again</button>
+          <button onClick={() => setRetryCount(prev => prev + 1)}>Try again</button>
         </div>
       )}
       {!loading && !error && (
