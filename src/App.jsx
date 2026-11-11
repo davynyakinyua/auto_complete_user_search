@@ -31,17 +31,49 @@ import './App.css'
 
 */
 
+
+
+function App() {
 const [users, setUsers] = useState([]);
 const [loading, setLoading] = useState(true);
 const [error, setError] = useState(null);
 const [userInput, setUserInput] = useState('');
 
-
-function App() {
-
-
   return (
     <>
+      <h1>LIST OF USERS</h1>
+      <div>
+        <label>Search:
+          <input type='text'
+                  value={userInput}
+                  onChange={(e) => setUserInput(e.target.value)}
+                  placeholder='type a name...'
+          />        
+        </label>
+      </div>
+      {loading && (
+        <div>
+          <div></div>
+          <p>Loading...</p>
+        </div>
+      )}
+      {error && (
+        <div>
+          <p>{error}</p>
+          <button>Try again</button>
+        </div>
+      )}
+      {!loading && !error && (
+        <ul>
+          {users.length === 0 ? (
+            <p>No user found matching "{userInput}"</p>
+          ):(
+            users.map((user) => (
+            <li key={user?.id}>{user?.name} {user?.email}</li>
+          ))
+          )}
+        </ul>
+      )}
       
     </>
   )
