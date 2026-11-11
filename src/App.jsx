@@ -80,6 +80,28 @@ useEffect(() => {
 
 }, []);
 
+// Handle real-time filtering with case-insensitivity and whitespace trimming
+useEffect(() => {
+  const trimmedInput = userInput.trim().toLowerCase();
+
+  if(!trimmedInput){
+    setFilteredUsers(users);
+  } else {
+    const results = users.filter((user) => {
+      if(!trimmedInput) return true;
+      
+      return (
+        user.name.toLowerCase().includes(trimmedInput) || 
+        user.email.toLowerCase().includes(trimmedInput)
+      );
+    });
+
+    return setFilteredUsers(results);
+  }
+
+
+}, [userInput, users]);
+
   return (
     <>
       <h1>LIST OF USERS</h1>
@@ -106,10 +128,10 @@ useEffect(() => {
       )}
       {!loading && !error && (
         <ul>
-          {users.length === 0 ? (
+          {filteredUsers.length === 0 ? (
             <p>No user found matching "{userInput}"</p>
           ):(
-            users.map((user) => (
+            filteredUsers.map((user) => (
             <li key={user?.id}>{user?.name} {user?.email}</li>
           ))
           )}
